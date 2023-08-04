@@ -1,0 +1,68 @@
+body {
+  background: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  overflow: hidden;
+  margin: 0;
+  color: orange;
+  font-family: sans-serif;
+}
+a {
+  text-decoration: none !important;
+  color: inherit !important;
+  background-color: transparent !important;
+  cursor: pointer;
+  outline: none !important;
+  box-shadow: none !important;
+  transition: none !important;
+  -webkit-text-fill-color: inherit !important; /* Will override color (regardless of order) */
+}
+.container {
+  display: grid;
+  place-items: center;
+
+}
+.container a{
+  margin-top: 10px;
+}
+button.btn a {
+  text-decoration: none;
+  color: inherit;
+  background-color: transparent;
+  cursor: pointer;
+  outline: none;
+  box-shadow: none;
+  transition: none;
+  -webkit-text-fill-color: inherit;
+}
+
+#flyingText {
+  position: fixed;
+  top: 0;
+  font-size: 5em;
+  animation: rotate 5s ease-in-out forwards, appear 5s ease-in-out forwards;
+  opacity: 0;
+}
+
+@keyframes rotate {
+  0% {
+      transform: rotateX(0deg) scale(0.1);
+  }
+  50%{
+      transform: rotateX(180deg) scale(0.5);
+  }
+  100% {
+      transform: rotateX(360deg) scale(1);
+  }
+}
+
+@keyframes appear {
+  0% {
+      opacity: 0;
+  }
+  100% {
+      opacity: 1;
+  }
+}
