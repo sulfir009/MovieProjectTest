@@ -1,4 +1,7 @@
 <?php
+/*
+Функція для де-авторизації
+*/
 session_start();
 
 $_SESSION = array();

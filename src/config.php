@@ -4,7 +4,7 @@ $username = "root";
 $password = "121312";
 $dbname = "movies";
 
-//Connect DB
+//Підключення до DB
  $conn = new mysqli($servername,$username,$password,$dbname);
 
 //Find error

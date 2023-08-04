@@ -1,5 +1,10 @@
 <?php
 include 'config.php';
+/*
+Функція для реестрації
+
+
+*/
 
 if ($_POST) {
     $username = $_POST['username'];

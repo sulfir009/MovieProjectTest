@@ -1,9 +1,11 @@
 <?php
 include 'config.php';
 
+//Отримання action із форм - showMovies.php, для розуміння вибору користувача.
 $action = $_POST['action'] ?? '';
 
 switch ($action) {
+    // Додавання у mySql таблицю новий фільм 
     case 'add':
         $title = $_POST['title'];
         $year = $_POST['year'];
@@ -18,7 +20,7 @@ switch ($action) {
             echo "Error adding record: " . $conn->error;
         }
         break;
-
+        // Видалення з mySql елементу за id
     case 'delete':
         $id = $_POST['id'];
         $sql = "DELETE FROM movies WHERE id=$id";
@@ -30,12 +32,12 @@ switch ($action) {
             echo "Error deleting record: " . $conn->error;
         }
         break;
-
+        // Пошук по stars - тобто по актору
     case 'searchActor':
         $actor = $_POST['actor'];
         searchByActor($actor);
         break;
-
+        // Пошук по title
     case 'searchMovie':
         $title = $_POST['title'];
         searchMovie($title);
@@ -56,7 +58,7 @@ switch ($action) {
         }
         
         
-
+// Пошук по stars - тобто по актору
 function searchByActor($actor) {
     global $conn;
     $sql = "SELECT * FROM movies WHERE stars LIKE '%$actor%'";
@@ -69,7 +71,7 @@ function searchByActor($actor) {
     echo json_encode($movies);
     
 }
-
+// Пошук по title
 function searchMovie($title) {
     global $conn;
     $sql = "SELECT * FROM movies WHERE title LIKE '%$title%'";

@@ -1,6 +1,12 @@
 <?php
 include 'config.php';
+/*
+Меню управління базою
+Відкриється тільки якщо авторизован
+Стилі сформовані на основі bootstrap
 
+
+*/
 $sql = "SELECT * FROM movies";
 $result = $conn->query($sql);
 ?>
@@ -39,6 +45,7 @@ $result = $conn->query($sql);
 
     <div class="container">
     <h1 ><a href="index.php"> Movies</a></h1>
+        <!-- Створення навігаційного меню -->
         <nav>
             <button class="btn btn-primary form-toggle" data-target="#addMovieForm">Add Movie</button>
             <button class="btn btn-primary form-toggle" data-target="#table">All Movies</button>
@@ -52,7 +59,8 @@ $result = $conn->query($sql);
         </nav>
 
         <div class="form-container">
-            <!-- Form Sections -->
+            <!-- Реалізація скритого вікна для отримання інформації по кожному пункту меню. 
+            Модальні вікна прижаті вліво. -->
 
             <div id="addMovieForm" class="form-section">
                 <div class="form-group">
@@ -121,7 +129,7 @@ $result = $conn->query($sql);
         </div>
 
         <div class="table-container">
-            <!-- Movies table -->
+            <!-- Таблиця для управління базою даних. Прижата вправо. -->
             <table class="table table-striped">
     <thead>
         <tr>
@@ -134,14 +142,15 @@ $result = $conn->query($sql);
     </thead>
     <tbody>
     <?php
+    //Вивід таблиці . Підключення по базі знаходиться у верху. Результат отримання таблиці виводимо в таблицю
     if ($result->num_rows > 0) {
         while($row = $result->fetch_assoc()) {
             echo "<tr>";
             echo "<td>" . $row["id"] . "</td>";
             echo "<td>" . $row["title"] . "</td>";
-            echo "<td>" . $row["release_year"] . "</td>";  // Изменено на правильное имя столбца
+            echo "<td>" . $row["release_year"] . "</td>";  
             echo "<td>" . $row["format"] . "</td>";
-            echo "<td>" . $row["stars"] . "</td>";  // Изменено на правильное имя столбца
+            echo "<td>" . $row["stars"] . "</td>";  
             echo "</tr>";
         }
     } else {
@@ -154,6 +163,7 @@ $result = $conn->query($sql);
         </div>
 
         <script>
+            // Скрипт по відновленню сторінки при натисканні на конкретні кнопки.
 document.getElementById('btndell').addEventListener('click', function() {
     setTimeout(function() {
         location.reload();
@@ -166,13 +176,13 @@ document.getElementById('btnadd').addEventListener('click', function() {
     }, 3000);
 });
 
-
+//Реалізація сортування. Змінюємо тип сортування одним кліком.
 $('#sortMoviesForm form').on('submit', function() {
     var order = $(this).find('input[name="order"]').val();
     $(this).find('input[name="order"]').val(order === 'ASC' ? 'DESC' : 'ASC');
 });
 
-
+//Відкриття та закриття модальних вікон з панелі nav
   $('.form-toggle').click(function(e) {
     e.preventDefault();
     var target = $(this).data('target');
@@ -193,7 +203,7 @@ $('#sortMoviesForm form').on('submit', function() {
       }
     }
   });
-
+//Функція для відновлення інформації у таблиці (ajax)
   function updateTable(movies) {
     var tbody = $('.table tbody');
     tbody.empty();
@@ -212,7 +222,7 @@ $('#sortMoviesForm form').on('submit', function() {
     }
   }
 
-  // Modified form submission handler
+  // Залежно від запросу відновлюємо сторінку без перезавантаження сторінки
   $('.form-section form').on('submit', function(e) {
     e.preventDefault();
 

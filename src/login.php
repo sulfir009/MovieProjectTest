@@ -1,6 +1,11 @@
 <?php
 include_once 'config.php';
+/*
+Логін меню
+Стилі сформовані на основі bootstrap
+Реалізовано - логін, регістрація
 
+*/
 if($_POST){
     $username = $_POST['username'];
     $password = $_POST['password'];
