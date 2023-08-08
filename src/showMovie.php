@@ -1,25 +1,22 @@
 <?php
 include 'config.php';
-/*
-Меню управління базою
-Відкриється тільки якщо авторизован
-Стилі сформовані на основі bootstrap
+include 'allMove.php';
 
-
-*/
+global $errors;
 $sql = "SELECT * FROM movies";
 $result = $conn->query($sql);
 ?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Show Movies</title>
     <script src="/assets/js/elem.js"></script>
+     <!-- Другие теги head -->
+     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
     <style>
         .form-section {
             display: none;
@@ -39,10 +36,81 @@ $result = $conn->query($sql);
             margin-right: 2px;
             margin-top: 2px;
         }
+        .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+}
+
+.modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #ffffff;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.close-btn {
+    cursor: pointer;
+}
+
     </style>
 </head>
 <body>
 
+    <script>
+     document.querySelector("#addMovieForm form").addEventListener("submit", function(e) {
+        const year = parseInt(document.querySelector('input[name="year"]').value, 10);
+        const currentYear = new Date().getFullYear();
+
+        if (year < 1870 || year > currentYear) {
+            e.preventDefault();
+            $('#addMovieFormError').modal('show');
+        }
+    });
+
+    // Дополнительная валидация названия фильма на клиентской стороне
+    document.querySelector("#addMovieForm form").addEventListener("submit", function(e) {
+        const title = document.querySelector('input[name="title"]').value;
+
+        if (title.length < 3 || title.length > 30 || /[\'^£$%&*()}{@#~?><>,|=_+¬]/.test(title)) {
+            e.preventDefault();
+            $('#minMaxError').modal('show');
+        }
+    });
+
+
+let modals = document.querySelectorAll('.modal');
+let closeBtns = document.querySelectorAll('.close-btn');
+
+closeBtns.forEach((btn, index) => {
+    btn.addEventListener('click', () => {
+        modals[index].style.display = 'none';
+    });
+});
+
+function openModal(modalId) {
+    document.getElementById(modalId).style.display = 'block';
+}
+
+        </script>
+        <?php if ($errors): ?>
+        <div style="color: red;">
+            <ul>
+                <?php foreach ($errors as $error): ?>
+                    <li><?= $error ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    <?php endif; ?>
     <div class="container">
     <h1 ><a href="index.php"> Movies</a></h1>
         <!-- Створення навігаційного меню -->
@@ -161,6 +229,21 @@ $result = $conn->query($sql);
 
 </table>
         </div>
+        <div class="modal fade" id="errorModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Ошибка</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Сюда будут выводиться ошибки -->
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <script>
             // Скрипт по відновленню сторінки при натисканні на конкретні кнопки.
@@ -244,6 +327,25 @@ $('#sortMoviesForm form').on('submit', function() {
       }
     });
   });
+  $.ajax({
+    url: 'allMove.php',
+    method: 'post',
+    data: form.serialize(),
+    success: function(response) {
+        let data = JSON.parse(response);
+        if (data.errors && data.errors.length > 0) {
+            // Отображаем ошибки в модальном окне
+            $('#errorModal').modal('show');
+            $('#errorModal .modal-body').html(data.errors.join('<br>'));
+
+        } else {
+            // Продолжаем обработку
+        }
+    },
+    error: function() {
+        console.log('An error occurred');
+    }
+});
 
 
 

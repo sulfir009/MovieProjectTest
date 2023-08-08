@@ -6,9 +6,20 @@ include_once 'config.php';
 Реалізовано - логін, регістрація
 
 */
+
 if($_POST){
     $username = $_POST['username'];
     $password = $_POST['password'];
+    if (empty($username) || empty($password)) {
+        echo '<div class="alert alert-danger">Пожалуйста, заполните все поля.</div>';
+        return;
+    }
+    
+    if (strlen($username) < 3 || strlen($username) > 30 || preg_match('/[^a-zA-Z0-9]/', $username)) {
+        echo '<div class="alert alert-danger">Имя пользователя должно быть длиной от 3 до 30 символов и не содержать специальных символов.</div>';
+        return;
+    }
+    
 
     $sql = "SELECT * FROM users WHERE username='$username' AND password='$password'";
     $result = $conn->query($sql);
@@ -38,16 +49,35 @@ $conn->close();
             color: orange;
         }
     </style>
+    <!-- Подключение стилей Bootstrap -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+
+<!-- Подключение библиотеки jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+<!-- Подключение скрипта Bootstrap -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 </head>
 <body>
+    <script>
+var errorMessage = "Пожалуйста, проверьте ваши данные. Поля не должны быть пустыми, имя пользователя может содержать только буквы и цифры и должно быть длиной не менее 3 символов.";
+$("#error-message").text(errorMessage);
+$("#registerModal").modal("show");
+var errorMessage = "Такой пользователь уже существует.";
+$("#error-message").text(errorMessage);
+$("#registerModal").modal("show");
+        </script>
+<div id="error-message" style="display: none;"></div>
+
     <div class="container">
         <h2>Login</h2>
         <form action="login.php" method="post">
             <div class="form-group">
                 <label>Username:</label>
-                <input type="text" class="form-control" name="username">
+                <input type="text" class="form-control" minlength="3" maxlength="30" pattern="^[a-zA-Z0-9]*$" name="username">
             </div>
             <div class="form-group">
                 <label>Password:</label>
@@ -70,7 +100,7 @@ $conn->close();
                         <form action="register.php" method="post">
                             <div class="form-group">
                                 <label>Username:</label>
-                                <input type="text" class="form-control" name="username">
+                                <input type="text" class="form-control" minlength="3" maxlength="30" pattern="^[a-zA-Z0-9]*$" name="username">
                             </div>
                             <div class="form-group">
                                 <label>Password:</label>
