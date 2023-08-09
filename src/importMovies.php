@@ -93,8 +93,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else {
             echo "Error: " . $stmt->error;
         }
-        
     }
     header("Location: index.php");
+    
 }
 ?>

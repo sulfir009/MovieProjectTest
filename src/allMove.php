@@ -83,7 +83,9 @@ switch ($action) {
 
         case 'sortMovies':
             $order = $_POST['order'] === "ASC" ? "ASC" : "DESC";
-            $sql = "SELECT * FROM movies ORDER BY LOWER(title) {$order}";
+            $sql = "SELECT * FROM movies ORDER BY 
+    REPLACE(REPLACE(REPLACE(REPLACE(title, 'І', '\x01'), 'і', '\x02'), 'Ї', '\x03'), 'ї', '\x04') {$order}";
+
             $result = $conn->query($sql);
             
             $movies = array();
