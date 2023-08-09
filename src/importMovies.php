@@ -32,9 +32,10 @@ if ($conn->connect_error) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    echo "File name: " . $file['name'] . "<br>";
+    
 
     $file = $_FILES['movieFile'];
+    echo "File name: " . $file['name'] . "<br>";
 
     // Check if the uploaded file is of txt format
     if (pathinfo($file['name'], PATHINFO_EXTENSION) !== 'txt') {
@@ -93,6 +94,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             echo "Error: " . $stmt->error;
         }
     }
-    header("Location: index.php");
+    
 }
 ?>

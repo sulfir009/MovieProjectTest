@@ -2,6 +2,10 @@
 include 'config.php';
 include 'allMove.php';
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 global $errors;
 $sql = "SELECT * FROM movies";
 $result = $conn->query($sql);
@@ -67,6 +71,16 @@ $result = $conn->query($sql);
 <body>
 
     <script>
+        function showError(message) {
+    Swal.fire({
+        icon: 'error',
+        title: 'Ошибка',
+        text: message
+    });
+}
+
+
+
      document.querySelector("#addMovieForm form").addEventListener("submit", function(e) {
         const year = parseInt(document.querySelector('input[name="year"]').value, 10);
         const currentYear = new Date().getFullYear();
@@ -229,23 +243,33 @@ function openModal(modalId) {
 
 </table>
         </div>
-        <div class="modal fade" id="errorModal" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Ошибка</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <!-- Сюда будут выводиться ошибки -->
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- Error Modal -->
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="errorModalLabel">Error</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="errorMessage">
+        <!-- Error message will be inserted here -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
         <script>
+function showError(message) {
+    document.getElementById('errorMessage').innerText = message;
+    $('#errorModal').modal('show');
+}
+
             // Скрипт по відновленню сторінки при натисканні на конкретні кнопки.
 document.getElementById('btndell').addEventListener('click', function() {
     setTimeout(function() {
@@ -317,9 +341,14 @@ $('#sortMoviesForm form').on('submit', function() {
       method: 'post',
       data: form.serialize(),
       success: function(response) {
-        if (action === 'searchActor' || action === 'searchMovie' || action === 'sortMovies' ) {
+        let data = JSON.parse(response);
+        if (data.error) {
+            showError(data.error);
+    } else {
+            if (action === 'searchActor' || action === 'searchMovie' || action === 'sortMovies' ) {
             console.log(response);
             updateTable(JSON.parse(response));
+        }
         }
       },
       error: function() {
@@ -327,25 +356,7 @@ $('#sortMoviesForm form').on('submit', function() {
       }
     });
   });
-  $.ajax({
-    url: 'allMove.php',
-    method: 'post',
-    data: form.serialize(),
-    success: function(response) {
-        let data = JSON.parse(response);
-        if (data.errors && data.errors.length > 0) {
-            // Отображаем ошибки в модальном окне
-            $('#errorModal').modal('show');
-            $('#errorModal .modal-body').html(data.errors.join('<br>'));
-
-        } else {
-            // Продолжаем обработку
-        }
-    },
-    error: function() {
-        console.log('An error occurred');
-    }
-});
+  
 
 
 
